@@ -4,19 +4,19 @@
 
 const Keymap::Key Keymap::layout[][(int)Matrix::Dim::Row][(int)Matrix::Dim::Col] = {
   [(int)Layer::Base] = {
-    { Key::None, Key::Num9, Key::Num7, Key::Num5, Key::Num3, Key::Num1, Key::Num0, Key::Num2, Key::Num4, Key::Num6, Key::Num8, Key::None },
-    { Key::None, Key::SQuote, Key::Comma, Key::Period, Key::P, Key::Y, Key::F, Key::G, Key::C, Key::R, Key::L, Key::None },
-    { Key::None, Key::A, Key::O, Key::E, Key::U, Key::I, Key::D, Key::H, Key::T, Key::N, Key::S, Key::None },
-    { Key::Shift, Key::Semicolon, Key::Q, Key::J, Key::K, Key::X, Key::B, Key::M, Key::W, Key::V, Key::Z, Key::Shift },
-    { Key::None, Key::None, Key::Alt, Key::Sym, Key::None, Key::Ctrl, Key::Ctrl, Key::None, Key::Sym, Key::Alt, Key::None, Key::None },
-    { Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::Space, Key::BSpace, Key::None, Key::None, Key::None, Key::None },
-    { Key::None, Key::None, Key::None, Key::Enter, Key::Esc, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None }
+    { Key::Grave, Key::Num1,  Key::Num2,   Key::Num3,   Key::Num4,  Key::Num5,  Key::Num6,  Key::Num7,   Key::Num8,  Key::Num9,   Key::Num0,      Key::Minus,  Key::Esc,  Key::F1,       Key::F2  },
+    { Key::Tab,   Key::Q,     Key::W,      Key::E,      Key::R,     Key::T,     Key::Y,     Key::U,      Key::I,     Key::O,      Key::P,         Key::BSlash, Key::F3,   Key::F4,       Key::F5 },
+    { Key::Esc,   Key::A,     Key::S,      Key::D,      Key::F,     Key::G,     Key::H,     Key::J,      Key::K,     Key::L,      Key::Semicolon, Key::SQuote, Key::F6,   Key::F7,       Key::F8 },
+    { Key::Shift, Key::Z,     Key::X,      Key::C,      Key::V,     Key::B,     Key::N,     Key::M,      Key::Comma, Key::Period, Key::Slash,     Key::Shift,  Key::F9,   Key::F10,      Key::F11 },
+    { Key::None,  Key::Grave, Key::BSlash, Key::Left,   Key::None,  Key::Right, Key::Up,    Key::None,   Key::Down,  Key::LBrace, Key::RBrace,    Key::None,   Key::F12,  Key::None,     Key::None },
+    { Key::None,  Key::None,  Key::Equal,  Key::LCtrl,  Key::None,  Key::LAlt,  Key::Space, Key::Enter,  Key::RCmd,  Key::None,   Key::None,      Key::None,   Key::None, Key::None,     Key::None },
+    { Key::None,  Key::None,  Key::None,   Key::BSpace, Key::None,  Key::LCmd,  Key::Minus, Key::None,   Key::RAlt,  Key::RCtrl,  Key::None,      Key::None,   Key::None, Key::None,     Key::None }
   },
   [(int)Layer::Sym] = {
     { Key::None, Key::F9, Key::F7, Key::F5, Key::F3, Key::F1, Key::F10, Key::F2, Key::F4, Key::F6, Key::F8, Key::None },
-    { Key::None, Key::Percent, Key::At, Key::BSlash, Key::LBrace, Key::LBrack, Key::RBrack, Key::RBrace, Key::Tilde, Key::Carrot, Key::Grave, Key::None },
+    { Key::None, Key::Percent, Key::At, Key::BSlash, Key::LBrace, Key::LBrack, Key::RBrack, Key::RBrace, Key::None, Key::Carrot, Key::None, Key::None },
     { Key::None, Key::Pound, Key::Dollar, Key::LParen, Key::Asterisk, Key::Bang, Key::Slash, Key::Underscore, Key::RParen, Key::Equal, Key::Plus, Key::None },
-    { Key::None, Key::None, Key::None, Key::Ampersand, Key::Pipe, Key::None, Key::None, Key::Minus, Key::Question, Key::None, Key::None, Key::None },
+    { Key::None, Key::None, Key::None, Key::Ampersand, Key::Pipe, Key::None, Key::None, Key::None, Key::Question, Key::None, Key::None, Key::None },
     { Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None },
     { Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None },
     { Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None, Key::None }

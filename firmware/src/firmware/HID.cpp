@@ -76,7 +76,7 @@ const uint8_t HID::scancodes[] = {
   [(int)Scancode::Del] = 0x4c,
   [(int)Scancode::End] = 0x4d,
   [(int)Scancode::PgDn] = 0x4e,
-  [(int)Scancode::Right] = 0x50,
+  [(int)Scancode::Right] = 0x4f,
   [(int)Scancode::Left] = 0x50,
   [(int)Scancode::Down] = 0x51,
   [(int)Scancode::Up] = 0x52
@@ -220,12 +220,13 @@ void HID::begin(void) {
 
 void HID::sendKeys(
   const Keymap *km
-) {
+) {  
   auto oldReport = report;
   memset(&report, 0, sizeof(report));
 
   for (int k = 0, i = 0; k < (int)Keymap::Key::Count && i < 6; k++) {
     auto key = (Keymap::Key)k;
+    
     auto pressed = km->pressed(key);
     if (!pressed) continue;
 
@@ -239,6 +240,7 @@ void HID::sendKeys(
       case Keymap::Key::Sym: break;
       default: {
         auto info = scancodeMap[(int)key];
+       
         report.keycode[i++] = scancodes[(int)info.scancode];
         if (info.shift) {
           report.modifier |= 1 << 1;
@@ -248,7 +250,15 @@ void HID::sendKeys(
   }
 
   if (memcmp(&report, &oldReport, sizeof(report))) {
+//    Serial.println("-------------- REPORT---------");
+//    Serial.println(report.modifier);
+//    Serial.println(report.keycode[0]);
+//    Serial.println(report.keycode[1]);
+//    Serial.println(report.keycode[2]);
+//    Serial.println(report.keycode[3]);
+//    Serial.println(report.keycode[4]);
+//    Serial.println(report.keycode[5]);
+//    Serial.println("------------------------------");
     bleHID.keyboardReport(&report);
   }
 }
-

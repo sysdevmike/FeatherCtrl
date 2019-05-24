@@ -10,7 +10,7 @@ void setup(void) {
   keyboard.begin();
 }
 
-void loop(void) {
+void loop(void) {  
   keyboard.update();
   // sleep to save power
   delay(10);

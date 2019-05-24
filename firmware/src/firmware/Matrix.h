@@ -7,7 +7,7 @@ class Matrix {
   public:
     enum class Dim {
       Row = 7,
-      Col = 12,
+      Col = 15,
     };
 
     struct Key {

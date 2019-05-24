@@ -1,28 +1,34 @@
 #include "Matrix.h"
+#include "MCP23S17.h"
 
 #include <Arduino.h>
 
 const uint8_t Matrix::rowPins[] = {
-  PIN_A2, PIN_A3, PIN_A4, PIN_A5, PIN_SPI_MOSI, PIN_WIRE_SCL, PIN_WIRE_SDA
+  4, 3, 2, 16, 15, 7, 11
 };
 
 const uint8_t Matrix::colPins[] = {
-  5, 6, 10, 11, 12, 13, PIN_SERIAL_RX, PIN_SPI_MISO, PIN_SERIAL_TX, PIN_A1, PIN_A0, PIN_SPI_SCK
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 };
+
+MCP mcp(0, 27); 
 
 Matrix::Matrix(void) {
   memset(keys, 0, sizeof(keys));
 }
 
 void Matrix::begin(void) {
+  mcp.begin();
+  
   for (auto c = 0; c < (int)Matrix::Dim::Col; c++) {
-    pinMode(colPins[c], OUTPUT);
-    digitalWrite(colPins[c], HIGH);
+    mcp.pinMode(colPins[c], OUTPUT);
+    mcp.digitalWrite(colPins[c], HIGH);
   }
-
+  
   for (auto r = 0; r < (int)Matrix::Dim::Row; r++) {
     pinMode(rowPins[r], INPUT_PULLUP);
   }
+
 }
 
 bool Matrix::scan(void) {
@@ -31,8 +37,8 @@ bool Matrix::scan(void) {
   bool update = false;
 
   for (auto c = 0; c < (int)Matrix::Dim::Col; c++) {
-  
-    digitalWrite(colPins[c], LOW);
+
+    mcp.digitalWrite(colPins[c], LOW);
   
     for (auto r = 0; r < (int)Matrix::Dim::Row; r++) {
       auto pressed = digitalRead(rowPins[r]) == LOW;
@@ -51,7 +57,7 @@ bool Matrix::scan(void) {
       }
     }
   
-    digitalWrite(colPins[c], HIGH);
+    mcp.digitalWrite(colPins[c], HIGH);
   }
 
   return update;
@@ -67,6 +73,6 @@ void Matrix::sleep(void) {
   }
 
   for (auto r = 0; r < (int)Matrix::Dim::Row; r++) {
-      //nrf_gpio_cfg_sense_input(g_ADigitalPinMap[rowPins[r]], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
+      nrf_gpio_cfg_sense_input(g_ADigitalPinMap[rowPins[r]], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
   }
 }

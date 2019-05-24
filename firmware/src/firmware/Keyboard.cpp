@@ -11,6 +11,7 @@ void Keyboard::begin(void) {
 }
 
 void Keyboard::update(void) {
+   
   auto update = matrix.scan();
   if (update) {
     idleTime = millis();
@@ -35,4 +36,3 @@ void Keyboard::sleepCheck(void) {
     }
   }
 }
-
