@@ -67,6 +67,6 @@ void Matrix::sleep(void) {
   }
 
   for (auto r = 0; r < (int)Matrix::Dim::Row; r++) {
-    nrf_gpio_cfg_sense_input(g_ADigitalPinMap[rowPins[r]], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
+      //nrf_gpio_cfg_sense_input(g_ADigitalPinMap[rowPins[r]], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
   }
 }
