@@ -194,6 +194,14 @@ const HID::KeyInfo HID::scancodeMap[] = {
   [(int)Keymap::Key::Left] = { .scancode = Scancode::Left, .shift = false },
   [(int)Keymap::Key::Down] = { .scancode = Scancode::Down, .shift = false },
   [(int)Keymap::Key::Up] = { .scancode = Scancode::Up, .shift = false },
+
+  [(int)Keymap::Key::Capslock] = { .scancode = Scancode::Esc, .shift = false },
+  [(int)Keymap::Key::Insert] = { .scancode = Scancode::BSlash, .shift = false },
+  [(int)Keymap::Key::SL1] = { .scancode = Scancode::Equal, .shift = false },
+  [(int)Keymap::Key::SL4] = { .scancode = Scancode::BSpace, .shift = false },
+  [(int)Keymap::Key::SR1] = { .scancode = Scancode::Minus, .shift = false },
+  [(int)Keymap::Key::SR3] = { .scancode = Scancode::Enter, .shift = false },
+  [(int)Keymap::Key::SR4] = { .scancode = Scancode::Space, .shift = false },
 };
 
 HID::HID(void)
@@ -238,10 +246,7 @@ void HID::sendKeys(
     
     auto pressed = km->pressed(key);
     if (!pressed) continue;
-
-    Serial.println("pressed key index");
-    Serial.println((int) key);
-
+    
     switch (key) {
       case Keymap::Key::Ctrl:
         report.modifier |= modifers[(int)HID::Mod::Ctrl]; break;
@@ -251,23 +256,19 @@ void HID::sendKeys(
         report.modifier |= modifers[(int)HID::Mod::Shift]; break;
       case Keymap::Key::Sym: break;
 
-      case Keymap::Key::LCtrl:
+      case Keymap::Key::SL2:
         report.modifier |= modifers[(int)HID::Mod::LCtrl]; break;
-      case Keymap::Key::LAlt:
+      case Keymap::Key::SL5:
         report.modifier |= modifers[(int)HID::Mod::LAlt]; break;
       case Keymap::Key::LShift:
         report.modifier |= modifers[(int)HID::Mod::LShift]; break;
-      case Keymap::Key::LCmd:
-        Serial.println("pressed left cmd");
-        Serial.println((int)HID::Mod::LCmd);
+      case Keymap::Key::SL6:
         report.modifier |= modifers[(int)HID::Mod::LCmd]; break;        
-      case Keymap::Key::RCtrl:
-        report.modifier |= modifers[(int)HID::Mod::RCtrl]; break;
-      case Keymap::Key::RAlt:
+      case Keymap::Key::SR2:
         report.modifier |= modifers[(int)HID::Mod::RAlt]; break;
       case Keymap::Key::RShift:
         report.modifier |= modifers[(int)HID::Mod::RShift]; break;
-      case Keymap::Key::RCmd:
+      case Keymap::Key::SR6:
         report.modifier |= modifers[(int)HID::Mod::RCmd]; break;                      
       
       default: {
@@ -281,16 +282,18 @@ void HID::sendKeys(
     }
   }
 
-  if (memcmp(&report, &oldReport, sizeof(report))) {
-    Serial.println("-------------- REPORT---------");
-    Serial.println(report.modifier);
-    Serial.println(report.keycode[0]);
-    Serial.println(report.keycode[1]);
-    Serial.println(report.keycode[2]);
-    Serial.println(report.keycode[3]);
-    Serial.println(report.keycode[4]);
-    Serial.println(report.keycode[5]);
-    Serial.println("------------------------------");
+  if (memcmp(&report, &oldReport, sizeof(report))) {    
+    
+//      Serial.println("-------------- REPORT---------");
+//      Serial.println(report.modifier);
+//      Serial.println(report.keycode[0]);
+//      Serial.println(report.keycode[1]);
+//      Serial.println(report.keycode[2]);
+//      Serial.println(report.keycode[3]);
+//      Serial.println(report.keycode[4]);
+//      Serial.println(report.keycode[5]);
+//      Serial.println("------------------------------");
+
     bleHID.keyboardReport(&report);
   }
 }
