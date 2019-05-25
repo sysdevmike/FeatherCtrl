@@ -69,7 +69,7 @@ bool Matrix::pressed(const Matrix::Key k) const {
 
 void Matrix::sleep(void) {
   for (auto c = 0; c < (int)Matrix::Dim::Col; c++) {
-    digitalWrite(colPins[c], LOW);
+    mcp.digitalWrite(colPins[c], LOW);
   }
 
   for (auto r = 0; r < (int)Matrix::Dim::Row; r++) {

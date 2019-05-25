@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "KeyMap.h"
 #include "HID.h"
+#include "LED.h"
 
 class Keyboard {
   public:
@@ -16,6 +17,7 @@ class Keyboard {
     Matrix matrix;
     Keymap keymap;
     HID hid;
+    LED led;
     unsigned long idleTime;
 
     static const uint8_t sleepMinutes = 10;

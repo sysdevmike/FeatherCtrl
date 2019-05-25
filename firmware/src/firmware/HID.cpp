@@ -282,18 +282,7 @@ void HID::sendKeys(
     }
   }
 
-  if (memcmp(&report, &oldReport, sizeof(report))) {    
-    
-//      Serial.println("-------------- REPORT---------");
-//      Serial.println(report.modifier);
-//      Serial.println(report.keycode[0]);
-//      Serial.println(report.keycode[1]);
-//      Serial.println(report.keycode[2]);
-//      Serial.println(report.keycode[3]);
-//      Serial.println(report.keycode[4]);
-//      Serial.println(report.keycode[5]);
-//      Serial.println("------------------------------");
-
+  if (memcmp(&report, &oldReport, sizeof(report))) {       
     bleHID.keyboardReport(&report);
   }
 }
