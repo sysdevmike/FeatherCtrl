@@ -85,7 +85,16 @@ const uint8_t HID::scancodes[] = {
 const uint8_t HID::modifers[] = {
   [(int)Mod::Ctrl] = 1 << 0,
   [(int)Mod::Alt] = 1 << 2,
-  [(int)Mod::Shift] = 1 << 1
+  [(int)Mod::Shift] = 1 << 1,
+  
+  [(int)Mod::LCtrl] = 1 << 0,
+  [(int)Mod::LShift] = 1 << 1,
+  [(int)Mod::LAlt] = 1 << 2,
+  [(int)Mod::LCmd] = 1 << 3,
+  [(int)Mod::RCtrl] = 1 << 4,
+  [(int)Mod::RShift] = 1 << 5,
+  [(int)Mod::RAlt] = 1 << 6,
+  [(int)Mod::RCmd] = 1 << 7
 };
 
 const HID::KeyInfo HID::scancodeMap[] = {
@@ -230,6 +239,9 @@ void HID::sendKeys(
     auto pressed = km->pressed(key);
     if (!pressed) continue;
 
+    Serial.println("pressed key index");
+    Serial.println((int) key);
+
     switch (key) {
       case Keymap::Key::Ctrl:
         report.modifier |= modifers[(int)HID::Mod::Ctrl]; break;
@@ -238,6 +250,26 @@ void HID::sendKeys(
       case Keymap::Key::Shift:
         report.modifier |= modifers[(int)HID::Mod::Shift]; break;
       case Keymap::Key::Sym: break;
+
+      case Keymap::Key::LCtrl:
+        report.modifier |= modifers[(int)HID::Mod::LCtrl]; break;
+      case Keymap::Key::LAlt:
+        report.modifier |= modifers[(int)HID::Mod::LAlt]; break;
+      case Keymap::Key::LShift:
+        report.modifier |= modifers[(int)HID::Mod::LShift]; break;
+      case Keymap::Key::LCmd:
+        Serial.println("pressed left cmd");
+        Serial.println((int)HID::Mod::LCmd);
+        report.modifier |= modifers[(int)HID::Mod::LCmd]; break;        
+      case Keymap::Key::RCtrl:
+        report.modifier |= modifers[(int)HID::Mod::RCtrl]; break;
+      case Keymap::Key::RAlt:
+        report.modifier |= modifers[(int)HID::Mod::RAlt]; break;
+      case Keymap::Key::RShift:
+        report.modifier |= modifers[(int)HID::Mod::RShift]; break;
+      case Keymap::Key::RCmd:
+        report.modifier |= modifers[(int)HID::Mod::RCmd]; break;                      
+      
       default: {
         auto info = scancodeMap[(int)key];
        
@@ -250,15 +282,15 @@ void HID::sendKeys(
   }
 
   if (memcmp(&report, &oldReport, sizeof(report))) {
-//    Serial.println("-------------- REPORT---------");
-//    Serial.println(report.modifier);
-//    Serial.println(report.keycode[0]);
-//    Serial.println(report.keycode[1]);
-//    Serial.println(report.keycode[2]);
-//    Serial.println(report.keycode[3]);
-//    Serial.println(report.keycode[4]);
-//    Serial.println(report.keycode[5]);
-//    Serial.println("------------------------------");
+    Serial.println("-------------- REPORT---------");
+    Serial.println(report.modifier);
+    Serial.println(report.keycode[0]);
+    Serial.println(report.keycode[1]);
+    Serial.println(report.keycode[2]);
+    Serial.println(report.keycode[3]);
+    Serial.println(report.keycode[4]);
+    Serial.println(report.keycode[5]);
+    Serial.println("------------------------------");
     bleHID.keyboardReport(&report);
   }
 }

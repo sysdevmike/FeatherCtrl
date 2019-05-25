@@ -29,7 +29,9 @@ class HID {
     };
 
     enum class Mod {
-      Ctrl, Alt, Shift
+      Ctrl, Alt, Shift,
+      LCtrl, LShift, LAlt, LCmd,
+      RCtrl, RShift, RAlt, RCmd
     };
 
     struct KeyInfo {
