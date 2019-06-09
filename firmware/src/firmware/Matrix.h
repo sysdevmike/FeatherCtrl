@@ -7,7 +7,7 @@ class Matrix {
   public:
     enum class Dim {
       Row = 7,
-      Col = 12,
+      Col = 15,
     };
 
     struct Key {
@@ -22,16 +22,26 @@ class Matrix {
     void sleep(void);
 
   private:
+
+    enum class KeyStatus {
+      NOT_PRESSED,
+      PRESSED_BOUNCING,
+      PRESSED,
+      RELEASING_BOUNCING,
+    };
+  
     struct KeyState {
       uint32_t pressTime;
-      bool pressed;
+      KeyStatus status;
     };
 
     KeyState keys[(int)Dim::Row][(int)Dim::Col];
 
+    bool updateState(const int row, const int col, const bool pressed);
+
     static const uint8_t rowPins[];
     static const uint8_t colPins[];
-    static const uint8_t debounceTime = 5;
+    static const uint8_t debounceTime = 5;    
 };
 
 #endif

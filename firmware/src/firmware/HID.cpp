@@ -76,7 +76,7 @@ const uint8_t HID::scancodes[] = {
   [(int)Scancode::Del] = 0x4c,
   [(int)Scancode::End] = 0x4d,
   [(int)Scancode::PgDn] = 0x4e,
-  [(int)Scancode::Right] = 0x50,
+  [(int)Scancode::Right] = 0x4f,
   [(int)Scancode::Left] = 0x50,
   [(int)Scancode::Down] = 0x51,
   [(int)Scancode::Up] = 0x52
@@ -85,7 +85,16 @@ const uint8_t HID::scancodes[] = {
 const uint8_t HID::modifers[] = {
   [(int)Mod::Ctrl] = 1 << 0,
   [(int)Mod::Alt] = 1 << 2,
-  [(int)Mod::Shift] = 1 << 1
+  [(int)Mod::Shift] = 1 << 1,
+  
+  [(int)Mod::LCtrl] = 1 << 0,
+  [(int)Mod::LShift] = 1 << 1,
+  [(int)Mod::LAlt] = 1 << 2,
+  [(int)Mod::LCmd] = 1 << 3,
+  [(int)Mod::RCtrl] = 1 << 4,
+  [(int)Mod::RShift] = 1 << 5,
+  [(int)Mod::RAlt] = 1 << 6,
+  [(int)Mod::RCmd] = 1 << 7
 };
 
 const HID::KeyInfo HID::scancodeMap[] = {
@@ -133,7 +142,7 @@ const HID::KeyInfo HID::scancodeMap[] = {
   [(int)Keymap::Key::Tab] = { .scancode = Scancode::Tab, .shift = false },
   [(int)Keymap::Key::Space] = { .scancode = Scancode::Space, .shift = false },
   [(int)Keymap::Key::Minus] = { .scancode = Scancode::Minus, .shift = false },
-  [(int)Keymap::Key::Equal] = { .scancode = Scancode::Equal, .shift = false },
+  [(int)Keymap::Key::Equal] = { .scancode = Scancode::Grave, .shift = false },
   [(int)Keymap::Key::LBrace] = { .scancode = Scancode::LBrace, .shift = false },
   [(int)Keymap::Key::RBrace] = { .scancode = Scancode::RBrace, .shift = false },
   [(int)Keymap::Key::BSlash] = { .scancode = Scancode::BSlash, .shift = false },
@@ -185,6 +194,14 @@ const HID::KeyInfo HID::scancodeMap[] = {
   [(int)Keymap::Key::Left] = { .scancode = Scancode::Left, .shift = false },
   [(int)Keymap::Key::Down] = { .scancode = Scancode::Down, .shift = false },
   [(int)Keymap::Key::Up] = { .scancode = Scancode::Up, .shift = false },
+
+  [(int)Keymap::Key::Capslock] = { .scancode = Scancode::Esc, .shift = false },
+  [(int)Keymap::Key::Insert] = { .scancode = Scancode::BSlash, .shift = false },
+  [(int)Keymap::Key::SL1] = { .scancode = Scancode::Equal, .shift = false },
+  [(int)Keymap::Key::SL4] = { .scancode = Scancode::BSpace, .shift = false },
+  [(int)Keymap::Key::SR1] = { .scancode = Scancode::Minus, .shift = false },
+  [(int)Keymap::Key::SR3] = { .scancode = Scancode::Enter, .shift = false },
+  [(int)Keymap::Key::SR4] = { .scancode = Scancode::Space, .shift = false },
 };
 
 HID::HID(void)
@@ -220,15 +237,16 @@ void HID::begin(void) {
 
 void HID::sendKeys(
   const Keymap *km
-) {
+) {  
   auto oldReport = report;
   memset(&report, 0, sizeof(report));
 
   for (int k = 0, i = 0; k < (int)Keymap::Key::Count && i < 6; k++) {
     auto key = (Keymap::Key)k;
+    
     auto pressed = km->pressed(key);
     if (!pressed) continue;
-
+    
     switch (key) {
       case Keymap::Key::Ctrl:
         report.modifier |= modifers[(int)HID::Mod::Ctrl]; break;
@@ -237,8 +255,27 @@ void HID::sendKeys(
       case Keymap::Key::Shift:
         report.modifier |= modifers[(int)HID::Mod::Shift]; break;
       case Keymap::Key::Sym: break;
+
+      case Keymap::Key::SL2:
+        report.modifier |= modifers[(int)HID::Mod::LCtrl]; break;
+      case Keymap::Key::SL5:
+        report.modifier |= modifers[(int)HID::Mod::LAlt]; break;
+      case Keymap::Key::LShift:
+        report.modifier |= modifers[(int)HID::Mod::LShift]; break;
+      case Keymap::Key::SL6:
+        report.modifier |= modifers[(int)HID::Mod::LCmd]; break;        
+      case Keymap::Key::SR2:
+        report.modifier |= modifers[(int)HID::Mod::RAlt]; break;
+      case Keymap::Key::RShift:
+        report.modifier |= modifers[(int)HID::Mod::RShift]; break;
+      case Keymap::Key::SR6:
+        report.modifier |= modifers[(int)HID::Mod::RCmd]; break;
+      case Keymap::Key::Grave:
+        report.modifier |= modifers[(int)HID::Mod::LCtrl]; break;                      
+      
       default: {
         auto info = scancodeMap[(int)key];
+       
         report.keycode[i++] = scancodes[(int)info.scancode];
         if (info.shift) {
           report.modifier |= 1 << 1;
@@ -247,8 +284,7 @@ void HID::sendKeys(
     }
   }
 
-  if (memcmp(&report, &oldReport, sizeof(report))) {
+  if (memcmp(&report, &oldReport, sizeof(report))) {       
     bleHID.keyboardReport(&report);
   }
 }
-
