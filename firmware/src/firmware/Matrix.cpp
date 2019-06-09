@@ -31,39 +31,44 @@ void Matrix::begin(void) {
 
 }
 
-bool Matrix::debounce_tick(const int row, const int col, const bool pressed) {
-  debounce_status_t *status = &(debounce[row][col]);
-  switch (status->state) {
-    case STATE_NOT_PRESSED:
+
+bool Matrix::updateState(const int row, const int col, const bool pressed) {
+    
+  KeyState *state = &(keys[row][col]);
+  auto scanTime = millis();
+  bool bouncing = (scanTime - state->pressTime) < debounceTime;
+  
+  switch (state->status) {
+    case KeyStatus::NOT_PRESSED:
     if (!pressed) {
       return false;
     }
     // state transition from not pressed to pressed
-    status->state = STATE_PRESSED_BOUNCING;
-    status->last_millis = millis();
+    state->status = KeyStatus::PRESSED_BOUNCING;
+    state->pressTime = scanTime;
     return true;
 
-    case STATE_PRESSED_BOUNCING:
-      if ((millis() - status->last_millis) < debounceTime) {
-        return false; // key bouncing, ignore
+    case KeyStatus::PRESSED_BOUNCING:
+      if (bouncing) {
+        return false;
       }
-      status->state = STATE_PRESSED;
+      state->status = KeyStatus::PRESSED;
       return false;
 
-    case STATE_PRESSED:
+    case KeyStatus::PRESSED:
     if (pressed) {
       return false;
     }
     // state transition from pressed to not pressed
-    status->state = STATE_RELEASING_BOUNCING;
-    status->last_millis = millis();
+    state->status = KeyStatus::RELEASING_BOUNCING;
+    state->pressTime = scanTime;
     return true;
 
-    case STATE_RELEASING_BOUNCING:
-    if ((millis() - status->last_millis) < debounceTime) {
-      return false; // key bouncing, ignore
+    case KeyStatus::RELEASING_BOUNCING:
+    if (bouncing) {
+      return false;
     }
-    status->state = STATE_NOT_PRESSED;
+    state->status = KeyStatus::NOT_PRESSED;
     return false;
   }
 
@@ -83,28 +88,11 @@ bool Matrix::scan(void) {
     for (auto r = 0; r < (int)Matrix::Dim::Row; r++) {
       auto pressed = digitalRead(rowPins[r]) == LOW;
 
-//      if (!debounce_tick(r, c, pressed)) {
-//        continue; // not pressed
-//      }
-
-      bool updated = debounce_tick(r, c, pressed);
+      bool updated = updateState(r, c, pressed);
       if(!update) {
         update = updated;
       }
       
-//      auto *keyOld = &keys[r][c];
-//      KeyState keyNew = { .pressTime = scanTime, .pressed = pressed };
-//
-//      if (keyNew.pressed && !keyOld->pressed) {
-//        *keyOld = keyNew;
-//        update = true;
-//      } else if (!keyNew.pressed && keyOld->pressed) {
-//        if (keyNew.pressTime - keyOld->pressTime > debounceTime) {
-//          keyOld->pressed = false;
-//          update = true;
-//        }
-//      }
-
     }
   
     mcp.digitalWrite(colPins[c], HIGH);
@@ -114,16 +102,7 @@ bool Matrix::scan(void) {
 }
 
 bool Matrix::pressed(const Matrix::Key k) const {
-  bool isPressed = debounce[k.r][k.c].state == STATE_PRESSED || debounce[k.r][k.c].state == STATE_PRESSED_BOUNCING;
-//  if(isPressed) {
-//    Serial.println("row:");
-//    Serial.println(k.r);
-//    Serial.println("col:");
-//    Serial.println(k.c);
-//  }
-  return isPressed;
-//  return debounce[k.r][k.c].state == STATE_PRESSED || debounce[k.r][k.c].state == STATE_PRESSED_BOUNCING;
-//  return keys[k.r][k.c].pressed;
+  return keys[k.r][k.c].status == KeyStatus::PRESSED || keys[k.r][k.c].status == KeyStatus::PRESSED_BOUNCING;
 }
 
 void Matrix::sleep(void) {

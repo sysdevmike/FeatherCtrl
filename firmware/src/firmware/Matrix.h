@@ -22,29 +22,22 @@ class Matrix {
     void sleep(void);
 
   private:
+
+    enum class KeyStatus {
+      NOT_PRESSED,
+      PRESSED_BOUNCING,
+      PRESSED,
+      RELEASING_BOUNCING,
+    };
   
     struct KeyState {
       uint32_t pressTime;
-      bool pressed;
+      KeyStatus status;
     };
 
     KeyState keys[(int)Dim::Row][(int)Dim::Col];
 
-    struct debounce_status_t {
-      uint8_t state;
-      uint32_t last_millis;
-    };    
-    
-    debounce_status_t debounce[(int)Dim::Row][(int)Dim::Col];
-    
-    enum {
-      STATE_NOT_PRESSED = 0,
-      STATE_PRESSED_BOUNCING = 1, // freeze for 5ms, consider pressed
-      STATE_PRESSED = 2,
-      STATE_RELEASING_BOUNCING = 3, // freeze for 5ms
-    };
-
-    bool debounce_tick(const int row, const int col, const bool pressed);
+    bool updateState(const int row, const int col, const bool pressed);
 
     static const uint8_t rowPins[];
     static const uint8_t colPins[];
