@@ -24,8 +24,8 @@ void Keyboard::update(void) {
 
 void Keyboard::sleepCheck(void) {
   if ((millis() - idleTime) > (sleepMinutes * 60 * 1000)) {
-    matrix.sleep();
     led.offAll();
+    matrix.sleep();    
 
     uint8_t sd_en;
     sd_softdevice_is_enabled(&sd_en);

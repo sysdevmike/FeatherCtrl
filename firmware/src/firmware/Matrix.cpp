@@ -31,6 +31,46 @@ void Matrix::begin(void) {
 
 }
 
+bool Matrix::debounce_tick(const int row, const int col, const bool pressed) {
+  debounce_status_t *status = &(debounce[row][col]);
+  switch (status->state) {
+    case STATE_NOT_PRESSED:
+    if (!pressed) {
+      return false;
+    }
+    // state transition from not pressed to pressed
+    status->state = STATE_PRESSED_BOUNCING;
+    status->last_millis = millis();
+    return true;
+
+    case STATE_PRESSED_BOUNCING:
+    if ((millis() - status->last_millis) < debounceTime) {
+      return true; // key bouncing, ignore
+    }
+    status->state = STATE_PRESSED;
+    return true;
+
+    case STATE_PRESSED:
+    if (pressed) {
+      return true;
+    }
+    // state transition from pressed to not pressed
+    status->state = STATE_RELEASING_BOUNCING;
+    status->last_millis = millis();
+    return false;
+
+    case STATE_RELEASING_BOUNCING:
+    if ((millis() - status->last_millis) < debounceTime) {
+      return false; // key bouncing, ignore
+    }
+    status->state = STATE_NOT_PRESSED;
+    return false;
+  }
+
+  return false; // unreached
+}
+
+
 bool Matrix::scan(void) {
   auto scanTime = millis();
 
@@ -42,6 +82,10 @@ bool Matrix::scan(void) {
   
     for (auto r = 0; r < (int)Matrix::Dim::Row; r++) {
       auto pressed = digitalRead(rowPins[r]) == LOW;
+
+      if (!debounce_tick(r, c, pressed)) {
+        continue; // not pressed
+      }
 
       auto *keyOld = &keys[r][c];
       KeyState keyNew = { .pressTime = scanTime, .pressed = pressed };
