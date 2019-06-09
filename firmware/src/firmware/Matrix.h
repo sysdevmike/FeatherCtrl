@@ -18,7 +18,6 @@ class Matrix {
     Matrix(void);
     void begin(void);
     bool scan(void);
-    bool debounce_tick(const int row, const int col, const bool pressed);
     bool pressed(const Key k) const;
     void sleep(void);
 
@@ -44,7 +43,8 @@ class Matrix {
       STATE_PRESSED = 2,
       STATE_RELEASING_BOUNCING = 3, // freeze for 5ms
     };
-        
+
+    bool debounce_tick(const int row, const int col, const bool pressed);
 
     static const uint8_t rowPins[];
     static const uint8_t colPins[];
